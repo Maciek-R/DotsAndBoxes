@@ -1,4 +1,5 @@
 package GAME;
+import static Constans.Constans.*;
 
 public class Dot {
 
@@ -16,22 +17,26 @@ public class Dot {
 		selected = CHOSEN.NOONE;
 	}
 
-	public Dot checkCollisionWith(int X, int Y){
+	/*public Line checkCollisionWith(int X, int Y){
 		
-		if(selected == CHOSEN.NOONE || selected == CHOSEN.SELECTED){
-		
-			if(X>=pos_x && X<pos_x+DOT_WIDTH)
+			if(X>=pos_x +DOT_WIDTH && X<pos_x+GRID_WIDTH)
 				if(Y>=pos_y && Y<pos_y+DOT_WIDTH){
 					selected = CHOSEN.SELECTED;
-					return this;
+					return new Line(pos_x+DOT_WIDTH, pos_y, 0);
 				}
 		
-			selected = CHOSEN.NOONE;
-			return null;
-		}
+			if(X>=pos_x && X<pos_x+DOT_WIDTH)
+				if(Y>=pos_y + DOT_WIDTH && Y<pos_y+GRID_WIDTH){
+					selected = CHOSEN.SELECTED;
+					return new Line(pos_x, pos_y+DOT_WIDTH, 1);
+				}
+			
 		
-		return null;
-	}
+			return null;
+		
+		
+		
+	}*/
 	
 	public int getPos_x() {
 		return pos_x;

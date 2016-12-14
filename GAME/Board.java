@@ -9,16 +9,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Random;
 import javax.swing.Timer;
 
-import GAME.Dot.CHOSEN;
+import GAME.Line.DIR;
 
-import java.util.Vector;
-
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Painter;
 import static Constans.Constans.*;
 
 
@@ -36,9 +31,19 @@ public class Board extends JPanel implements ActionListener{
 	
 	public enum TURN {PLAYER_1, PLAYER_2};
 	TURN turn = TURN.PLAYER_1;
-	//Player player;
 	Dot Dots[][];
-	Dot dot = null;
+	Line line = null;
+	
+	
+	State state;
+	/*Square squares[][];
+	Line horLines[][];
+	Line verLines[][];*/
+	
+	
+	//Square square=null;
+	int movesToEnd = (GRID)*(GRID+1)*2;
+	boolean gameOver = false;
 	
 	Adapter adap;
 	MouseAdapter MouseAdapter;
@@ -63,7 +68,15 @@ public class Board extends JPanel implements ActionListener{
 	private void init(){
 		Dots = new Dot[GRID+1][GRID+1];
 		setDots(Dots);
-		//player = new Player();
+		
+		
+		state = new State();
+		/*horLines = new Line[GRID+1][GRID];
+		verLines = new Line[GRID][GRID+1];
+		setLines(horLines, verLines);
+		
+		squares = new Square[GRID][GRID];
+		setSquares(squares);*/
 		
 		adap = new Adapter();	
 		this.addKeyListener(adap);
@@ -83,30 +96,16 @@ public class Board extends JPanel implements ActionListener{
 			}
 		}
 	}
-	
-	
-	
+		
 	private void drawDots(Graphics g){
+		g.setColor(Color.BLACK); 
 		for(int i=0; i<Dots.length; ++i){
 			for(int j=0; j<Dots[i].length; ++j){
-				drawDot(g, Dots[i][j]);
+				//drawDot(g, Dots[i][j]);
+				Dot dot = Dots[i][j];
+				g.fillRect(dot.getPos_x(), dot.getPos_y(), Dot.DOT_WIDTH, Dot.DOT_WIDTH);
 			}
 		}
-	}
-	private void drawDot(Graphics g, Dot dot){
-		switch(dot.getSelected()){
-			case NOONE:		g.setColor(Color.BLACK);   break;
-			case PLAYER_1:  g.setColor(Color.BLUE);	   break;
-			case PLAYER_2:  g.setColor(Color.RED);	   break;
-			case SELECTED:  g.setColor(Color.GREEN);
-				//if(turn == TURN.PLAYER_1)
-					//g.setColor(Color.BLUE);
-				//else
-				//	g.setColor(Color.RED);
-				break;
-		}
-		
-		g.fillOval(dot.getPos_x(), dot.getPos_y(), Dot.DOT_WIDTH, Dot.DOT_WIDTH);
 	}
 	private void drawTurn(Graphics g){
 		g.setColor(Color.BLACK);
@@ -119,7 +118,102 @@ public class Board extends JPanel implements ActionListener{
 			g.setColor(Color.RED);
 		}
 		
-		g.fillOval(40, 0, Dot.DOT_WIDTH, Dot.DOT_WIDTH);
+		g.fillOval(40, 0, 50, 50);
+	}
+	
+	private void drawHorLines(Graphics g){
+		
+		Line horLines[][] = state.getHorLines();
+		
+		for(int i=0; i<horLines.length; ++i){
+			for(int j=0; j<horLines[i].length; ++j){
+				//g.setColor(Color.BLUE);
+				//g.setColor(Color.BLACK);
+				switch(horLines[i][j].getSelected()){
+				case NOONE:		continue;		
+				case PLAYER_1:	g.setColor(Color.BLUE);			break;
+				case PLAYER_2:	g.setColor(Color.RED);			break;
+				}
+				
+				g.fillRect(horLines[i][j].getPos_x(), horLines[i][j].getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
+			}
+		}
+	}
+	private void drawVerLines(Graphics g){
+		
+		Line verLines[][] = state.getVerLines();
+		
+		for(int i=0; i<verLines.length; ++i){
+			for(int j=0; j<verLines[i].length; ++j){
+				//g.setColor(Color.RED);
+				//g.setColor(Color.BLACK);
+				
+				switch(verLines[i][j].getSelected()){
+				case NOONE:		continue;		
+				case PLAYER_1:	g.setColor(Color.BLUE);			break;
+				case PLAYER_2:	g.setColor(Color.RED);			break;
+				}
+				
+				g.fillRect(verLines[i][j].getPos_x(), verLines[i][j].getPos_y(), Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
+			}
+		}
+	}
+	
+	private void drawSquares(Graphics g){
+		
+		Square squares[][] = state.getSquares();
+		
+		for(int i=0; i<squares.length; ++i){
+			for(int j=0; j<squares[i].length; ++j){
+				
+				if(squares[i][j].id == 0) continue;
+				
+				if(squares[i][j].id == 1){
+					g.setColor(Color.BLUE);
+				}
+				else if(squares[i][j].id == 2){
+					g.setColor(Color.RED);
+				}
+				g.fillRect(squares[i][j].getLineUp().getPos_x(), squares[i][j].getLineUp().getPos_y()+Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
+				
+			}
+		}
+	}
+	private void drawLine(Graphics g){
+		if(line!=null){
+			g.setColor(Color.GREEN);
+			
+			if(line.getDir() == DIR.POZIOM){
+				g.fillRect(line.getPos_x(), line.getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
+				//System.out.println("ta");
+			}
+				
+			if(line.getDir() == DIR.PION)
+				g.fillRect(line.getPos_x(), line.getPos_y(), Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
+		}
+	}
+
+	private void drawGameOver(Graphics g){
+		g.setColor(Color.RED);
+		g.drawString("GAME OVER", 50, 60);
+		
+		Integer points_1=new Integer(0), points_2=new Integer(0);
+		
+		Square[][] squares = state.getSquares();
+		
+		for(int i=0; i<squares.length; ++i){
+			for(int j=0; j<squares[i].length; ++j){
+				
+				if(squares[i][j].id == 1) ++points_1;
+				else if(squares[i][j].id == 2) ++points_2;
+				
+			}
+		}
+		
+		g.setColor(Color.BLUE);
+		g.drawString(points_1.toString(), 50, 70);
+		g.setColor(Color.RED);
+		g.drawString(points_2.toString(), 60, 70);
 	}
 	
 	public void paint(Graphics g){
@@ -127,9 +221,32 @@ public class Board extends JPanel implements ActionListener{
 		
 			drawTurn(g);
 			drawDots(g);
+			
+			
+			drawHorLines(g);
+			drawVerLines(g);
+			
+			drawLine(g);
+			
+			drawSquares(g);
+			
+			if(gameOver){
+				drawGameOver(g);
+			}
+			
+			/*if(square!=null){
+				g.setColor(Color.GREEN);
+				g.fillRect(square.getLineUp().getPos_x(), square.getLineUp().getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
+				g.fillRect(square.getLineDown().getPos_x(), square.getLineDown().getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
+				
+				g.fillRect(square.getLineLeft().getPos_x(), square.getLineLeft().getPos_y(), Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
+				g.fillRect(square.getLineRight().getPos_x(), square.getLineRight().getPos_y(), Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
+			}*/
+			
+			
 			//g.drawImage(Map.bg, 0, 0, null);
 		
-		repaint();
+		//repaint();
 }
 	
 	
@@ -171,10 +288,9 @@ public class Board extends JPanel implements ActionListener{
 		
 			
 			
-		}
-			
-		
+		}	
 	}
+	
 	
 	
 	
@@ -193,19 +309,38 @@ public class Board extends JPanel implements ActionListener{
 			int X = e.getX();
 			int Y = e.getY();
 			
-			for(int i=0; i<Dots.length; ++i){
-				for(int j=0; j<Dots[i].length; ++j){
-					dot = Dots[i][j].checkCollisionWith(X, Y);
-					if(dot!=null) break;
+			line = null;
+			
+			Line[][] verLines = state.getVerLines();
+			Line[][] horLines = state.getHorLines();
+			
+			for(int i=0;i<horLines.length; ++i){
+				for(int j=0; j<horLines[i].length; ++j){
+					line = horLines[i][j].checkCollisionWith(X, Y);
+					
+					if(line!=null) {break;}
 				}
-				if(dot!=null) break;
+				if(line!=null) break;
 			}
 			
-			System.out.println(e.getX() + " " +e.getY());
-			//repaint();
+			if(line==null)
+			for(int i=0;i<verLines.length; ++i){
+				for(int j=0; j<verLines[i].length; ++j){
+					line = verLines[i][j].checkCollisionWith(X, Y);
+					
+					if(line!=null) {break;}
+				}
+				if(line!=null) break;
+			}
+			
+			
+			//System.out.println(e.getX() + " " +e.getY());
+			repaint();
 		}
 		
 	}
+	
+		
 	class MouseListenerAdapter implements MouseListener{
 
 		@Override
@@ -213,18 +348,35 @@ public class Board extends JPanel implements ActionListener{
 			int X = e.getX();
 			int Y = e.getY();
 			
-			if(dot!=null){
+			boolean anotherMove;
+			
+			if(line!=null){
 				if(turn == TURN.PLAYER_1){
-					dot.setSelected(CHOSEN.PLAYER_1);
-					turn = TURN.PLAYER_2;
+					line.setSelected(GAME.Line.CHOSEN.PLAYER_1);
+					
+					anotherMove = state.checkFullSquare(line, turn);
+					
+					if(!anotherMove)
+						turn = TURN.PLAYER_2;
 				}
 				else{
-					dot.setSelected(CHOSEN.PLAYER_2);
-					turn = TURN.PLAYER_1;
+					line.setSelected(GAME.Line.CHOSEN.PLAYER_2);
+					
+					anotherMove = state.checkFullSquare(line, turn);
+					
+					if(!anotherMove)
+						turn = TURN.PLAYER_1;
 				}
 				
-				dot = null;
+				line = null;
+				
+				movesToEnd--;
+				if(movesToEnd==0){
+					gameOver=true;
+				}
 			}
+			
+			repaint();
 			
 		}
 
