@@ -14,13 +14,13 @@ public class Test {
 	public void test() {
 		State state = new State();
 		Line line = new Line(0,0,DIR.POZIOM, 0, 0);
-		boolean m = state.move(line, TURN.PLAYER_2);
+		//boolean m = state.move(line, TURN.PLAYER_2);
 		line = new Line(0,0,DIR.POZIOM, 1, 0);
-		m = state.move(line, TURN.PLAYER_2);
+		//m = state.move(line, TURN.PLAYER_2);
 		line = new Line(0,0,DIR.PION, 0, 0);
-		m = state.move(line, TURN.PLAYER_2);
+		//m = state.move(line, TURN.PLAYER_2);
 		line = new Line(0,0,DIR.PION, 0, 1);
-		m = state.move(line, TURN.PLAYER_1);
+		//m = state.move(line, TURN.PLAYER_1);
 		
 		//boolean p = state.checkFullSquare(line, TURN.PLAYER_2);
 	

@@ -6,6 +6,7 @@ import static Constans.Constans.*;
 import GAME.Controller.TURN;
 import GAME.Line.CHOSEN;
 import GAME.Line.DIR;
+import GAME.Square.ID;
 
 public class State {
 
@@ -38,62 +39,16 @@ public class State {
 			}
 		}
 		
-		/*Line l = new Line(line);
-		if(turn==TURN.PLAYER_1){
-			l.setSelected(CHOSEN.PLAYER_1);
-		}
-		else if(turn==TURN.PLAYER_2){
-			l.setSelected(CHOSEN.PLAYER_2);
-		}
-		
-		if(l.getDir() == DIR.POZIOM){
-			horLines[q][w] = new Line(l);
-		}
-		else{
-			verLines[q][w] = new Line(l);
-		}*/
-		
-
-		
 		setSquares(squares);
 		//sprawdzanie czy sa zajete przez graczy
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
-				squares[i][j].id = s.getSquares()[i][j].id;
+				squares[i][j].setID(s.getSquares()[i][j].getID());
 			}
 		}
 		
 		//
 		
-	}
-	
-	public boolean move(Line line, TURN turn){
-		
-		Line l = new Line(line);
-		
-		if(turn == TURN.PLAYER_1)
-			l.setSelected(CHOSEN.PLAYER_1);
-		else
-			l.setSelected(CHOSEN.PLAYER_2);
-		
-		
-		if(l.getDir() == DIR.POZIOM)
-			horLines[l.w][l.k] = l;
-		else
-			verLines[l.w][l.k] = l;
-		
-		setSquares(squares);			//zoptymalizowac
-		
-		boolean  x = checkFullSquare(l, turn);
-	//	System.out.println(x);
-		
-		
-		//return true;
-		
-		
-		
-		
-		return x;
 	}
 	
 	public Line[][] getHorLines(){
@@ -171,12 +126,12 @@ public class State {
 
 	public void markLine(Line line){
 		if(line.getDir()==DIR.PION){
-			verLines[line.w][line.k].setSelected(line.getSelected());
-			verLines[line.w][line.k].setDir(DIR.PION);
+			verLines[line.getRow()][line.getColumn()].setSelected(line.getSelected());
+			verLines[line.getRow()][line.getColumn()].setDir(DIR.PION);
 		}
 		else{
-			horLines[line.w][line.k].setSelected(line.getSelected());
-			horLines[line.w][line.k].setDir(DIR.POZIOM);
+			horLines[line.getRow()][line.getColumn()].setSelected(line.getSelected());
+			horLines[line.getRow()][line.getColumn()].setDir(DIR.POZIOM);
 		}
 	}
 	
@@ -207,8 +162,8 @@ public class State {
 		int red = 0;
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
-				if(squares[i][j].id == 1) blue+=10;
-				else if(squares[i][j].id == 2) red+=10;
+				if(squares[i][j].getID() == ID.PLAYER_1) blue+=10;
+				else if(squares[i][j].getID() == ID.PLAYER_2) red+=10;
 			}
 		}
 		

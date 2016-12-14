@@ -6,22 +6,24 @@ import GAME.Line.CHOSEN;
 
 public class Square {
 
+	public enum ID{NOONE, PLAYER_1, PLAYER_2};
 	
 	private Line LineUp    = null;
 	private Line LineDown  = null;
 	private Line LineLeft  = null;
 	private Line LineRight = null;
 	
-	public int id = 0;
+	private ID id;	
 	
 	public Square(Line up, Line down, Line left, Line right){
 		this.LineUp    = up;
 		this.LineDown  = down;
 		this.LineLeft  = left;
 		this.LineRight = right;
+		id = ID.NOONE;
 	}
 	
-	public Square checkCollisionWith(int X, int Y){
+	/*public Square checkCollisionWith(int X, int Y){
 		
 		if(Y > LineUp.getPos_y() +Dot.DOT_WIDTH && Y < LineDown.getPos_y()){
 			if(X > LineLeft.getPos_x()+Dot.DOT_WIDTH && X < LineRight.getPos_x()){
@@ -30,11 +32,11 @@ public class Square {
 		}
 		
 		return null;	
-	}
+	}*/
 	
 	public boolean checkFull(){
 		
-		if(id!=0) return false;
+		if(id!=ID.NOONE) return false;
 		
 		if ((LineUp.getSelected() == CHOSEN.PLAYER_1 || LineUp.getSelected() == CHOSEN.PLAYER_2) &&
 			(LineDown.getSelected() == CHOSEN.PLAYER_1 || LineDown.getSelected() == CHOSEN.PLAYER_2) &&
@@ -50,10 +52,10 @@ public class Square {
 	
 	public void setToPaint(TURN turn){
 		if(turn == TURN.PLAYER_1){
-			id = 1;
+			id = ID.PLAYER_1;
 		}
 		else{
-			id = 2;
+			id = ID.PLAYER_2;
 		}
 	}
 	
@@ -80,5 +82,11 @@ public class Square {
 	}
 	public void setLineRight(Line right){
 		this.LineRight = right;
+	}
+	public ID getID(){
+		return id;
+	}
+	public void setID(ID id){
+		this.id = id;
 	}
 }

@@ -1,6 +1,5 @@
 package GAME;
 
-import GAME.Dot.CHOSEN;
 import Constans.Constans;
 
 public class Line {
@@ -10,44 +9,29 @@ public enum DIR{POZIOM, PION};
 
 	private int pos_x;
 	private int pos_y;
-	public DIR dir;	
+	private DIR dir;	
 	private CHOSEN selected;
-	int w;//wiersz
-	int k;//kolumna
+	private int row;//wiersz
+	private int column;//kolumna
 	
 	public Line(int x, int y, DIR dir, int w, int k){
 		pos_x = x;
 		pos_y = y;
 		this.dir = dir;
 		selected = CHOSEN.NOONE;
-		this.w = w;
-		this.k = k;
+		this.row = w;
+		this.column = k;
 	}
 	public Line(Line l){
 		pos_x = l.getPos_x();
 		pos_y = l.getPos_y();
 		dir = l.getDir();
 		selected = l.getSelected();
-		w = l.w;
-		k = l.k;
-		//System.out.println("tu");
+		row = l.getRow();
+		column = l.getColumn();
 	}
 	
 	public Line checkCollisionWith(int X, int Y){
-		
-		/*if(selected == CHOSEN.NOONE || selected == CHOSEN.SELECTED){
-		
-			if(X>=pos_x && X<pos_x+DOT_WIDTH)
-				if(Y>=pos_y && Y<pos_y+DOT_WIDTH){
-					selected = CHOSEN.SELECTED;
-					return this;
-				}
-		
-			selected = CHOSEN.NOONE;
-			return null;
-		}
-		
-		return null;*/
 		
 		if(selected == CHOSEN.PLAYER_1 || selected == CHOSEN.PLAYER_2) return null;
 		
@@ -66,6 +50,7 @@ public enum DIR{POZIOM, PION};
 		
 		return null;
 	}
+	
 	public int getPos_x() {
 		return pos_x;
 	}
@@ -77,7 +62,6 @@ public enum DIR{POZIOM, PION};
 		this.selected = selected;
 	}
 	public CHOSEN getSelected(){
-		//System.out.println(selected);
 		return selected;
 	}
 	public boolean getSelectedByPlayer(){
@@ -93,7 +77,13 @@ public enum DIR{POZIOM, PION};
 		this.dir = dir;
 	}
 	public boolean equals(Line line){
-		if(w == line.w && k == line.k && dir == line.getDir()) return true;
+		if(row == line.getRow() && column == line.getColumn() && dir == line.getDir()) return true;
 		return false;
+	}
+	public int getRow(){
+		return row;
+	}
+	public int getColumn(){
+		return column;
 	}
 }

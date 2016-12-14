@@ -17,13 +17,9 @@ public class Controller {
 	private TURN turn = TURN.PLAYER_1;
 	private Dot Dots[][];
 	private State state;
-	/*Square squares[][];
-	Line horLines[][];
-	Line verLines[][];*/
 	
 	int tryb_gry = 1;			//0 - gracz-gracz, 1-gracz-komputer, 2 - komp-komp
 	
-	//Square square=null;
 	int movesToEnd = (GRID)*(GRID+1)*2;
 	boolean gameOver = false;
 	
@@ -124,138 +120,96 @@ public class Controller {
 	
 	public boolean compMove(){
 		if(turn == TURN.PLAYER_2){
-			
-			//Random random = new Random();
-			
-			/*boolean f = true;
-			int x, y, h;
-			Line line=null;
-			int count=0;
-			do{
-				
-				++count;
-				if(count>1000000) break;
-				f=true;
-				x = random.nextInt(3);
-				y = random.nextInt(3);
-				h = random.nextInt(2);
-				
-				if(h==0){
-					Line[][] horLines = state.getHorLines();
-					if(!horLines[y][x].getSelectedByPlayer())
-						{line = horLines[y][x]; break;}
-				}
-				else{
-					Line[][] verLines = state.getVerLines();
-					if(!verLines[y][x].getSelectedByPlayer())
-						{line = verLines[y][x]; break;}
-				}
-				
-			}while(f==true);*/
-			
-			int index=0;
-			Line[][] verLines = state.getVerLines();
-			Line[][] horLines = state.getHorLines();
-			Line line=null;
-			
-			
-			
-			State s = new State(state);	// tu jest cos zjebane, bo jak zrobie te 2 linijki to nie dziala, a to powinno nic nie robic
-			state = new State(s);
-			
-			int x = 0;
-			try {
-				x = Utils.minmax(state, turn, 4, 0);
-				System.out.print("X" + x+"   ");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-	//		state = new State(s);
-			
-			index=0;
-			boolean flag = false;
-			
-			//tu trzeba wybrac na podstawie x
-			
-			
-			index=0;
-			
-			int q=0;
 					
+			int x = Utils.minmax(state, turn, 5, 0);
 			
-			for(int i=0; i<verLines.length; ++i){			
-				for(int j=0; j<verLines[i].length; ++j){
-					
-					//System.out.println(verLines[i][j].getSelectedByPlayer());
-					
-					if(!verLines[i][j].getSelectedByPlayer())	{
-						//System.out.println(index);
-						if(x == index) {
-						
-							line = verLines[i][j];
-							flag = true;
-						}
-						
-						++index;
-					}
-						
-					if(flag) break;
-					
-				}
-				if(flag)break;
-			}
-			
-			
-			
-			if(!flag){
-				for(int i=0; i<horLines.length; ++i){
-					for(int j=0; j<horLines[i].length; ++j){
-						if(!horLines[i][j].getSelectedByPlayer()){
-							//System.out.println("index: "+index);
-							if(x == index) {
-								line = horLines[i][j];
-								flag = true;
-							}
-							++index;
-						}
-							
-						
-						
-						if(flag) break;
-					//	++index;
-					}
-					if(flag) break;
-				}
-			}
-			//System.out.println("Q "+q);
-			System.out.println(line.w +" "+ line.k);
-			
+			Line line = chooseLine(x);
 			
 			movesToEnd--;
 			if(movesToEnd==0){
 				gameOver=true;
 			}
 			
-			boolean anotherMove = false;
-			
-			line.setSelected(CHOSEN.PLAYER_2);
-			state.markLine(line);
-			
-			 
-			anotherMove = state.checkFullSquare(line, turn);
-		
-			//return false;
-			
-			if(anotherMove) return true;
-			else{
-				turn = TURN.PLAYER_1;
-				return false;
+			if(line!=null){
+				boolean anotherMove = false;
+				
+				line.setSelected(CHOSEN.PLAYER_2);
+				state.markLine(line);
+				
+				anotherMove = state.checkFullSquare(line, turn);
+				
+				if(anotherMove) return true;
+				else{
+					turn = TURN.PLAYER_1;
+					return false;
+				}
 			}
 				
 		}
+		else{	//TURN.PLAYER_1
+			
+			int x = Utils.minmax(state, turn, 5, 0);
+			
+			Line line = chooseLine(x);
+			
+			movesToEnd--;
+			if(movesToEnd==0){
+				gameOver=true;
+			}
+			
+			if(line!=null){
+				boolean anotherMove = false;
+				
+				line.setSelected(CHOSEN.PLAYER_1);
+				state.markLine(line);
+				
+				anotherMove = state.checkFullSquare(line, turn);
+				
+				if(anotherMove) return true;
+				else{
+					turn = TURN.PLAYER_2;
+					return false;
+				}
+			}
+			
+		}
+		
+		
 		return false;
+	}
+	
+	private Line chooseLine(int nr){
+		int index=0;
+		boolean flag = false;
+		Line[][] verLines = state.getVerLines();
+		Line[][] horLines = state.getHorLines();
+		
+		for(int i=0; i<verLines.length; ++i){			
+			for(int j=0; j<verLines[i].length; ++j){
+				
+				if(!verLines[i][j].getSelectedByPlayer())	{
+					if(nr == index)
+						return verLines[i][j];
+					
+					++index;
+				}				
+			}
+		}
+		
+		
+		
+		for(int i=0; i<horLines.length; ++i){
+			for(int j=0; j<horLines[i].length; ++j){
+				if(!horLines[i][j].getSelectedByPlayer()){
+				
+					if(nr == index)
+						return horLines[i][j];
+					
+					++index;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public State getState(){

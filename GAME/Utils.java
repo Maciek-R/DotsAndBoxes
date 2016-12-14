@@ -7,12 +7,12 @@ import GAME.Line.CHOSEN;
 
 public class Utils{
 
-	public static int minmax(State state, TURN turn, int g, int root) throws Exception{		//root == 0 czyli korzen
+	public static int minmax(State state, TURN turn, int g, int root) {		//root == 0 czyli korzen
 		
 		Line[][] verLines = state.getVerLines();
 		Line[][] horLines = state.getHorLines();
 		
-		Vector<Line> lines = new Vector<>();
+		Vector<Line> lines = new Vector<>();		//przechowuje referencje do linii niewybranych
 		
 		for(int i=0; i<verLines.length; ++i){			
 			for(int j=0; j<verLines[i].length; ++j){
@@ -27,13 +27,12 @@ public class Utils{
 			}
 		}
 		
-		if(g<=0) return state.h();
+		if(g<=0) return state.h();			//zwraca wartosc stanu gdy nie moze przeszukiwac dalej(glebokosc za duza)
 		
-		if(lines.size()==0) return state.h();
+		if(lines.size()==0) return state.h();	//podobnie, gdy nie ma juz wiecej ruchow do wyboru mimo glebokosci
 		
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
-		Vector<Integer> values = new Vector<>();
 		
 		int x = 0;
 		boolean m;
@@ -43,7 +42,6 @@ public class Utils{
 		for(Line line:lines){
 			State s = new State(state);
 			Line l = new Line(line);
-			//m = s.move(l, turn);	
 			
 			if(turn == TURN.PLAYER_1)
 				l.setSelected(CHOSEN.PLAYER_1);
@@ -54,12 +52,6 @@ public class Utils{
 			m = s.checkFullSquare(l, turn);
 			
 			
-			
-			
-			
-			//if(!m) System.out.println("asdasfsfhsdfdsf");
-			
-			
 			if(m && (turn == TURN.PLAYER_1))
 				x = minmax(s, TURN.PLAYER_1, g-1, root+1);
 			else if(!m && (turn == TURN.PLAYER_1))
@@ -68,17 +60,12 @@ public class Utils{
 				x = minmax(s, TURN.PLAYER_2, g-1, root+1);
 			else if(!m && (turn == TURN.PLAYER_2))
 				x = minmax(s, TURN.PLAYER_1, g-1, root+1);
-			else{
-				throw new Exception();
-			}
 			
-			values.addElement(new Integer(x));
 			
 			if(turn == TURN.PLAYER_1){
 				if(x > max){
 					max = x;
 					index = i;
-				//	System.out.println("aaa");
 				}
 				
 			}
@@ -94,28 +81,9 @@ public class Utils{
 		
 		
 		
-		if(root==0) {
-			System.out.println("Poziom "+g);
+		if(root==0) {			//gdy jest to korzen, to zwraca numer niewybranej linii
 			
-			for(Integer q:values){
-				System.out.println("   "+q);
-			}
-			
-			/*for(int q=0; q<verLines.length; ++q){			
-				for(int w=0; w<verLines[q].length; ++w){
-					if(!verLines[q][w].getSelectedByPlayer())	//wybieranie lini niewybranych przez graczy
-						System.out.println("aaa");
-				}
-			}
-			for(int q=0; q<horLines.length; ++q){
-				for(int w=0; w<horLines[q].length; ++w){
-					if(!horLines[q][w].getSelectedByPlayer())
-						System.out.println("aaa");
-				}
-			}*/
-			
-			
-			return index;		//zwraca numer linii ktora trzeba wybrac
+			return index;		
 		}
 		
 		if(turn == TURN.PLAYER_1)

@@ -13,6 +13,7 @@ import javax.swing.Timer;
 
 import GAME.Controller.TURN;
 import GAME.Line.DIR;
+import GAME.Square.ID;
 
 import javax.swing.JPanel;
 import static Constans.Constans.*;
@@ -36,8 +37,8 @@ public class Board extends JPanel implements ActionListener{
 	MouseListenerAdapter MouseListenerAdapter;
 	
 	Timer timer;	
-	boolean cpM=false;
-	boolean plM=false;
+	//boolean cpM=false;
+	boolean plM=true;
 
 
 	public Board(MyFrame frejm) {
@@ -95,8 +96,7 @@ public class Board extends JPanel implements ActionListener{
 		
 		for(int i=0; i<horLines.length; ++i){
 			for(int j=0; j<horLines[i].length; ++j){
-				//g.setColor(Color.BLUE);
-				//g.setColor(Color.BLACK);
+				
 				switch(horLines[i][j].getSelected()){
 				case NOONE:		continue;		
 				case PLAYER_1:	g.setColor(Color.BLUE);			break;
@@ -113,8 +113,6 @@ public class Board extends JPanel implements ActionListener{
 		
 		for(int i=0; i<verLines.length; ++i){
 			for(int j=0; j<verLines[i].length; ++j){
-				//g.setColor(Color.RED);
-				//g.setColor(Color.BLACK);
 				
 				switch(verLines[i][j].getSelected()){
 				case NOONE:		continue;		
@@ -134,12 +132,12 @@ public class Board extends JPanel implements ActionListener{
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
 				
-				if(squares[i][j].id == 0) continue;
+				if(squares[i][j].getID() == ID.NOONE) continue;
 				
-				if(squares[i][j].id == 1){
+				if(squares[i][j].getID() == ID.PLAYER_1){
 					g.setColor(Color.BLUE);
 				}
-				else if(squares[i][j].id == 2){
+				else if(squares[i][j].getID() == ID.PLAYER_2){
 					g.setColor(Color.RED);
 				}
 				g.fillRect(squares[i][j].getLineUp().getPos_x(), squares[i][j].getLineUp().getPos_y()+Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
@@ -153,7 +151,6 @@ public class Board extends JPanel implements ActionListener{
 			
 			if(line.getDir() == DIR.POZIOM){
 				g.fillRect(line.getPos_x(), line.getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
-				//System.out.println("ta");
 			}
 				
 			if(line.getDir() == DIR.PION)
@@ -172,8 +169,8 @@ public class Board extends JPanel implements ActionListener{
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
 				
-				if(squares[i][j].id == 1) ++points_1;
-				else if(squares[i][j].id == 2) ++points_2;
+				if(squares[i][j].getID() == ID.PLAYER_1) ++points_1;
+				else if(squares[i][j].getID() == ID.PLAYER_2) ++points_2;
 				
 			}
 		}
@@ -202,19 +199,6 @@ public class Board extends JPanel implements ActionListener{
 				drawGameOver(g);
 			}
 			
-			/*if(square!=null){
-				g.setColor(Color.GREEN);
-				g.fillRect(square.getLineUp().getPos_x(), square.getLineUp().getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
-				g.fillRect(square.getLineDown().getPos_x(), square.getLineDown().getPos_y(), GRID_WIDTH-Dot.DOT_WIDTH, Dot.DOT_WIDTH);
-				
-				g.fillRect(square.getLineLeft().getPos_x(), square.getLineLeft().getPos_y(), Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
-				g.fillRect(square.getLineRight().getPos_x(), square.getLineRight().getPos_y(), Dot.DOT_WIDTH, GRID_WIDTH-Dot.DOT_WIDTH);
-			}*/
-			
-			
-			//g.drawImage(Map.bg, 0, 0, null);
-		
-		//repaint();
 }
 	
 	
@@ -324,29 +308,23 @@ public class Board extends JPanel implements ActionListener{
 				}
 			}
 			else if(controller.tryb_gry == 1){
-				if(line!=null){		
+						
 					
-					
-					
-					if(!cpM){
-						plM = controller.playerMove(line);
-						line = null;
-					}		
-				}
-				
-				if(!plM)
-					cpM = controller.compMove();
-			}
-			/*else if(controller.tryb_gry == 1){
-				if(line!=null){		
-					if(!controller.playerMove(line)){
-						line = null;
-						while(controller.compMove());
+					if(plM){
+						if(line!=null){	
+							plM = controller.playerMove(line);
+							line = null;
+						}
+					}	
+					else{
+						plM = !controller.compMove();
 					}
-					line = null;
-				}
-			}*/
-			
+				
+			}
+			else if(controller.tryb_gry == 2){
+					
+					controller.compMove();
+			}
 			
 			
 			repaint();
