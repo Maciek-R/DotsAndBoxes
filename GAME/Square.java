@@ -1,6 +1,7 @@
 package GAME;
 
-import GAME.Board.TURN;
+
+import GAME.Controller.TURN;
 import GAME.Line.CHOSEN;
 
 public class Square {

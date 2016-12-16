@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.Timer;
 
+import GAME.Controller.TURN;
 import GAME.Line.DIR;
 
 import javax.swing.JPanel;
@@ -27,33 +28,16 @@ import static Constans.Constans.*;
 
 public class Board extends JPanel implements ActionListener{
 	
-	
-	
-	public enum TURN {PLAYER_1, PLAYER_2};
-	TURN turn = TURN.PLAYER_1;
-	Dot Dots[][];
+	Controller controller;
 	Line line = null;
-	
-	
-	State state;
-	/*Square squares[][];
-	Line horLines[][];
-	Line verLines[][];*/
-	
-	
-	//Square square=null;
-	int movesToEnd = (GRID)*(GRID+1)*2;
-	boolean gameOver = false;
 	
 	Adapter adap;
 	MouseAdapter MouseAdapter;
 	MouseListenerAdapter MouseListenerAdapter;
-
-	boolean GameOver = false;
 	
-	Timer timer;
-	
-
+	Timer timer;	
+	boolean cpM=false;
+	boolean plM=false;
 
 
 	public Board(MyFrame frejm) {
@@ -62,21 +46,11 @@ public class Board extends JPanel implements ActionListener{
 		setFocusTraversalKeysEnabled(false);
 		setPreferredSize(new Dimension(BOARD_WIDTH_PIX, BOARD_HEIGHT_PIX));
 		
+		controller = new Controller();
 		init();
 		
 	}
 	private void init(){
-		Dots = new Dot[GRID+1][GRID+1];
-		setDots(Dots);
-		
-		
-		state = new State();
-		/*horLines = new Line[GRID+1][GRID];
-		verLines = new Line[GRID][GRID+1];
-		setLines(horLines, verLines);
-		
-		squares = new Square[GRID][GRID];
-		setSquares(squares);*/
 		
 		adap = new Adapter();	
 		this.addKeyListener(adap);
@@ -89,20 +63,14 @@ public class Board extends JPanel implements ActionListener{
 		timer.start();
 	}
 	
-	private void setDots(Dot dots[][]){
-		for(int i=0; i<dots.length; ++i){
-			for(int j=0; j<dots[i].length; ++j){
-				dots[i][j] = new Dot(j*GRID_WIDTH + START_X, i*GRID_WIDTH + START_Y);
-			}
-		}
-	}
+	
 		
 	private void drawDots(Graphics g){
 		g.setColor(Color.BLACK); 
-		for(int i=0; i<Dots.length; ++i){
-			for(int j=0; j<Dots[i].length; ++j){
+		for(int i=0; i<controller.getDots().length; ++i){
+			for(int j=0; j<controller.getDots()[i].length; ++j){
 				//drawDot(g, Dots[i][j]);
-				Dot dot = Dots[i][j];
+				Dot dot = controller.getDots()[i][j];
 				g.fillRect(dot.getPos_x(), dot.getPos_y(), Dot.DOT_WIDTH, Dot.DOT_WIDTH);
 			}
 		}
@@ -111,7 +79,7 @@ public class Board extends JPanel implements ActionListener{
 		g.setColor(Color.BLACK);
 		g.drawString("TURN: ", 0, 10);
 		
-		if(turn == TURN.PLAYER_1){
+		if(controller.getTurn() == TURN.PLAYER_1){
 			g.setColor(Color.BLUE);
 		}
 		else{
@@ -123,7 +91,7 @@ public class Board extends JPanel implements ActionListener{
 	
 	private void drawHorLines(Graphics g){
 		
-		Line horLines[][] = state.getHorLines();
+		Line horLines[][] = controller.getState().getHorLines();
 		
 		for(int i=0; i<horLines.length; ++i){
 			for(int j=0; j<horLines[i].length; ++j){
@@ -141,7 +109,7 @@ public class Board extends JPanel implements ActionListener{
 	}
 	private void drawVerLines(Graphics g){
 		
-		Line verLines[][] = state.getVerLines();
+		Line verLines[][] = controller.getState().getVerLines();
 		
 		for(int i=0; i<verLines.length; ++i){
 			for(int j=0; j<verLines[i].length; ++j){
@@ -161,7 +129,7 @@ public class Board extends JPanel implements ActionListener{
 	
 	private void drawSquares(Graphics g){
 		
-		Square squares[][] = state.getSquares();
+		Square squares[][] = controller.getState().getSquares();
 		
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
@@ -199,7 +167,7 @@ public class Board extends JPanel implements ActionListener{
 		
 		Integer points_1=new Integer(0), points_2=new Integer(0);
 		
-		Square[][] squares = state.getSquares();
+		Square[][] squares = controller.getState().getSquares();
 		
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
@@ -230,7 +198,7 @@ public class Board extends JPanel implements ActionListener{
 			
 			drawSquares(g);
 			
-			if(gameOver){
+			if(controller.gameOver){
 				drawGameOver(g);
 			}
 			
@@ -311,8 +279,8 @@ public class Board extends JPanel implements ActionListener{
 			
 			line = null;
 			
-			Line[][] verLines = state.getVerLines();
-			Line[][] horLines = state.getHorLines();
+			Line[][] verLines = controller.getState().getVerLines();
+			Line[][] horLines = controller.getState().getHorLines();
 			
 			for(int i=0;i<horLines.length; ++i){
 				for(int j=0; j<horLines[i].length; ++j){
@@ -347,34 +315,39 @@ public class Board extends JPanel implements ActionListener{
 		public void mouseClicked(MouseEvent e) {
 			int X = e.getX();
 			int Y = e.getY();
+		
 			
-			boolean anotherMove;
-			
-			if(line!=null){
-				if(turn == TURN.PLAYER_1){
-					line.setSelected(GAME.Line.CHOSEN.PLAYER_1);
-					
-					anotherMove = state.checkFullSquare(line, turn);
-					
-					if(!anotherMove)
-						turn = TURN.PLAYER_2;
-				}
-				else{
-					line.setSelected(GAME.Line.CHOSEN.PLAYER_2);
-					
-					anotherMove = state.checkFullSquare(line, turn);
-					
-					if(!anotherMove)
-						turn = TURN.PLAYER_1;
-				}
-				
-				line = null;
-				
-				movesToEnd--;
-				if(movesToEnd==0){
-					gameOver=true;
+			if(controller.tryb_gry == 0){
+				if(line!=null){
+					controller.playerMove(line);
+					line = null;
 				}
 			}
+			else if(controller.tryb_gry == 1){
+				if(line!=null){		
+					
+					
+					
+					if(!cpM){
+						plM = controller.playerMove(line);
+						line = null;
+					}		
+				}
+				
+				if(!plM)
+					cpM = controller.compMove();
+			}
+			/*else if(controller.tryb_gry == 1){
+				if(line!=null){		
+					if(!controller.playerMove(line)){
+						line = null;
+						while(controller.compMove());
+					}
+					line = null;
+				}
+			}*/
+			
+			
 			
 			repaint();
 			

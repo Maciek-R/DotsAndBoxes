@@ -10,14 +10,26 @@ public enum DIR{POZIOM, PION};
 
 	private int pos_x;
 	private int pos_y;
-	public DIR dir;	//0 poziom
+	public DIR dir;	
 	private CHOSEN selected;
+	int w;//wiersz
+	int k;//kolumna
 	
-	public Line(int x, int y, DIR dir){
+	public Line(int x, int y, DIR dir, int w, int k){
 		pos_x = x;
 		pos_y = y;
 		this.dir = dir;
 		selected = CHOSEN.NOONE;
+		this.w = w;
+		this.k = k;
+	}
+	public Line(Line l){
+		pos_x = l.getPos_x();
+		pos_y = l.getPos_y();
+		dir = l.getDir();
+		selected = l.getSelected();
+		w = l.w;
+		k = l.k;
 	}
 	
 	public Line checkCollisionWith(int X, int Y){
@@ -66,10 +78,20 @@ public enum DIR{POZIOM, PION};
 	public CHOSEN getSelected(){
 		return selected;
 	}
+	public boolean getSelectedByPlayer(){
+		if(selected == CHOSEN.PLAYER_1 || selected == CHOSEN.PLAYER_2){
+			return true;
+		}
+		return false;
+	}
 	public DIR getDir(){
 		return dir;
 	}
 	public void setDir(DIR dir){
 		this.dir = dir;
+	}
+	public boolean equals(Line line){
+		if(w == line.w && k == line.k && dir == line.getDir()) return true;
+		return false;
 	}
 }
