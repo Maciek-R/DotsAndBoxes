@@ -61,9 +61,9 @@ public class State {
 		Line l = new Line(line);
 		
 		if(turn == TURN.PLAYER_1)
-			line.setSelected(CHOSEN.PLAYER_1);
+			l.setSelected(CHOSEN.PLAYER_1);
 		else
-			line.setSelected(CHOSEN.PLAYER_2);
+			l.setSelected(CHOSEN.PLAYER_2);
 		
 		
 		if(l.getDir() == DIR.POZIOM)
@@ -74,15 +74,15 @@ public class State {
 		setSquares(squares);			//zoptymalizowac
 		
 		boolean  x = checkFullSquare(l, turn);
+	//	System.out.println(x);
+		
+		
+		//return true;
 		
 		
 		
-		return true;
 		
-		
-		
-		
-		//return x;
+		return x;
 	}
 	
 	public Line[][] getHorLines(){
@@ -103,7 +103,6 @@ public class State {
 			for(int i=0; i<squares.length; ++i){
 				for(int j=0; j<squares[i].length; ++j){
 					if(squares[i][j].getLineUp().equals(line) || squares[i][j].getLineDown().equals(line) ){
-						
 						if(squares[i][j].checkFull()){
 							squares[i][j].setToPaint(turn);
 							anotherMove = true;
@@ -129,8 +128,9 @@ public class State {
 		else{
 			for(int i=0; i<squares.length; ++i){
 				for(int j=0; j<squares[i].length; ++j){
+				//	System.out.println(i + " "+j);
 					if(squares[i][j].getLineLeft().equals(line) || squares[i][j].getLineRight().equals(line)){
-						
+					//	System.out.println(i + " "+j);
 						if(squares[i][j].checkFull()){
 							squares[i][j].setToPaint(turn);
 							anotherMove = true;
@@ -187,8 +187,26 @@ public class State {
 		int red = 0;
 		for(int i=0; i<squares.length; ++i){
 			for(int j=0; j<squares[i].length; ++j){
-				if(squares[i][j].id == 1) blue++;
-				else if(squares[i][j].id == 2) red++;
+				if(squares[i][j].id == 1) blue+=10;
+				else if(squares[i][j].id == 2) red+=10;
+			}
+		}
+		
+		for(int i=0; i<horLines.length; ++i){
+			for(int j=0; j<horLines[i].length; ++j){
+				if(horLines[i][j].getSelected() == CHOSEN.PLAYER_1)
+					blue++;
+				else if(horLines[i][j].getSelected() == CHOSEN.PLAYER_2)
+					red++;
+			}
+		}
+		
+		for(int i=0; i<verLines.length; ++i){
+			for(int j=0; j<verLines[i].length; ++j){
+				if(verLines[i][j].getSelected() == CHOSEN.PLAYER_1)
+					blue++;
+				else if(verLines[i][j].getSelected() == CHOSEN.PLAYER_2)
+					red++;
 			}
 		}
 		

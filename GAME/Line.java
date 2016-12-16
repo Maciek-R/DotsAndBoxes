@@ -24,8 +24,8 @@ public enum DIR{POZIOM, PION};
 		this.k = k;
 	}
 	public Line(Line l){
-		pos_x = l.getPos_x();
-		pos_y = l.getPos_y();
+	//	pos_x = l.getPos_x();
+	//	pos_y = l.getPos_y();
 		dir = l.getDir();
 		selected = l.getSelected();
 		w = l.w;
