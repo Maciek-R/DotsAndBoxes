@@ -29,6 +29,7 @@ public class State {
 		for(int i=0; i<horLines.length; ++i){
 			for(int j=0; j<horLines[i].length; ++j){
 				horLines[i][j] = new Line(s.getHorLines()[i][j]);
+				//System.out.println(i + " "+j);
 			}
 		}
 		for(int i=0; i<verLines.length; ++i){
@@ -36,7 +37,6 @@ public class State {
 				verLines[i][j] = new Line(s.getVerLines()[i][j]);
 			}
 		}
-		
 		
 		/*Line l = new Line(line);
 		if(turn==TURN.PLAYER_1){
@@ -53,7 +53,18 @@ public class State {
 			verLines[q][w] = new Line(l);
 		}*/
 		
+
+		
 		setSquares(squares);
+		//sprawdzanie czy sa zajete przez graczy
+		for(int i=0; i<squares.length; ++i){
+			for(int j=0; j<squares[i].length; ++j){
+				squares[i][j].id = s.getSquares()[i][j].id;
+			}
+		}
+		
+		//
+		
 	}
 	
 	public boolean move(Line line, TURN turn){
@@ -158,7 +169,16 @@ public class State {
 		return anotherMove;
 	}
 
-	
+	public void markLine(Line line){
+		if(line.getDir()==DIR.PION){
+			verLines[line.w][line.k].setSelected(line.getSelected());
+			verLines[line.w][line.k].setDir(DIR.PION);
+		}
+		else{
+			horLines[line.w][line.k].setSelected(line.getSelected());
+			horLines[line.w][line.k].setDir(DIR.POZIOM);
+		}
+	}
 	
 	
 	private void setLines(Line horLines[][], Line verLines[][]){

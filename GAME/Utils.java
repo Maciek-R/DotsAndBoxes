@@ -17,13 +17,13 @@ public class Utils{
 		for(int i=0; i<verLines.length; ++i){			
 			for(int j=0; j<verLines[i].length; ++j){
 				if(!verLines[i][j].getSelectedByPlayer())	//wybieranie lini niewybranych przez graczy
-					lines.add(new Line(verLines[i][j]));
+					lines.add((verLines[i][j]));
 			}
 		}
 		for(int i=0; i<horLines.length; ++i){
 			for(int j=0; j<horLines[i].length; ++j){
 				if(!horLines[i][j].getSelectedByPlayer())
-					lines.add(new Line(horLines[i][j]));
+					lines.add((horLines[i][j]));
 			}
 		}
 		
@@ -43,7 +43,19 @@ public class Utils{
 		for(Line line:lines){
 			State s = new State(state);
 			Line l = new Line(line);
-			m = s.move(l, turn);			
+			//m = s.move(l, turn);	
+			
+			if(turn == TURN.PLAYER_1)
+				l.setSelected(CHOSEN.PLAYER_1);
+			else
+				l.setSelected(CHOSEN.PLAYER_2);
+			
+			s.markLine(l);
+			m = s.checkFullSquare(l, turn);
+			
+			
+			
+			
 			
 			//if(!m) System.out.println("asdasfsfhsdfdsf");
 			

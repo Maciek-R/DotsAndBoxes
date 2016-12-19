@@ -24,12 +24,13 @@ public enum DIR{POZIOM, PION};
 		this.k = k;
 	}
 	public Line(Line l){
-	//	pos_x = l.getPos_x();
-	//	pos_y = l.getPos_y();
+		pos_x = l.getPos_x();
+		pos_y = l.getPos_y();
 		dir = l.getDir();
 		selected = l.getSelected();
 		w = l.w;
 		k = l.k;
+		//System.out.println("tu");
 	}
 	
 	public Line checkCollisionWith(int X, int Y){
@@ -76,6 +77,7 @@ public enum DIR{POZIOM, PION};
 		this.selected = selected;
 	}
 	public CHOSEN getSelected(){
+		//System.out.println(selected);
 		return selected;
 	}
 	public boolean getSelectedByPlayer(){

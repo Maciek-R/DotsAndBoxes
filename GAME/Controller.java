@@ -45,6 +45,9 @@ public class Controller {
 	
 	public boolean playerMove(Line line){
 		
+		State s = new State(state);
+		System.out.println();
+		state = new State(s);
 		
 		if(tryb_gry == 0){
 			
@@ -52,6 +55,7 @@ public class Controller {
 				
 				if(turn == TURN.PLAYER_1){
 					line.setSelected(GAME.Line.CHOSEN.PLAYER_1);
+					state.markLine(line);
 					
 					anotherMove = state.checkFullSquare(line, turn);
 					
@@ -70,6 +74,7 @@ public class Controller {
 				}
 				else{
 					line.setSelected(GAME.Line.CHOSEN.PLAYER_2);
+					state.markLine(line);
 					
 					anotherMove = state.checkFullSquare(line, turn);
 							
@@ -95,6 +100,7 @@ public class Controller {
 			boolean anotherMove;
 			
 				line.setSelected(GAME.Line.CHOSEN.PLAYER_1);
+				state.markLine(line);
 				
 				anotherMove = state.checkFullSquare(line, turn);
 				
@@ -154,16 +160,19 @@ public class Controller {
 			
 			
 			
+			State s = new State(state);	// tu jest cos zjebane, bo jak zrobie te 2 linijki to nie dziala, a to powinno nic nie robic
+			state = new State(s);
+			
 			int x = 0;
 			try {
-				x = Utils.minmax(state, turn, 3, 0);
+				x = Utils.minmax(state, turn, 4, 0);
 				System.out.print("X" + x+"   ");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			
+	//		state = new State(s);
 			
 			index=0;
 			boolean flag = false;
@@ -232,7 +241,9 @@ public class Controller {
 			boolean anotherMove = false;
 			
 			line.setSelected(CHOSEN.PLAYER_2);
+			state.markLine(line);
 			
+			 
 			anotherMove = state.checkFullSquare(line, turn);
 		
 			//return false;
