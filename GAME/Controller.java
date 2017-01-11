@@ -121,7 +121,8 @@ public class Controller {
 	public boolean compMove(){
 		if(turn == TURN.PLAYER_2){
 					
-			int x = Utils.minmax(state, turn, 5, 0);
+			int x = Utils.minmax_alfa_beta(state, turn, 6, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		//	int x = Utils.minmax(state, turn, 6, 0);
 			
 			Line line = chooseLine(x);
 			
@@ -148,7 +149,8 @@ public class Controller {
 		}
 		else{	//TURN.PLAYER_1
 			
-			int x = Utils.minmax(state, turn, 5, 0);
+			int x = Utils.minmax_alfa_beta(state, turn, 5, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+			//int x = Utils.minmax(state, turn, 6, 0);
 			
 			Line line = chooseLine(x);
 			
@@ -180,7 +182,7 @@ public class Controller {
 	
 	private Line chooseLine(int nr){
 		int index=0;
-		boolean flag = false;
+		//boolean flag = false;
 		Line[][] verLines = state.getVerLines();
 		Line[][] horLines = state.getHorLines();
 		

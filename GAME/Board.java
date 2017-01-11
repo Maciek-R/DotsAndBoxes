@@ -38,7 +38,7 @@ public class Board extends JPanel implements ActionListener{
 	
 	Timer timer;	
 	//boolean cpM=false;
-	boolean plM=true;
+	boolean plM = true;
 
 
 	public Board(MyFrame frejm) {
@@ -178,7 +178,7 @@ public class Board extends JPanel implements ActionListener{
 		g.setColor(Color.BLUE);
 		g.drawString(points_1.toString(), 50, 70);
 		g.setColor(Color.RED);
-		g.drawString(points_2.toString(), 60, 70);
+		g.drawString(points_2.toString(), 70, 70);
 	}
 	
 	public void paint(Graphics g){
