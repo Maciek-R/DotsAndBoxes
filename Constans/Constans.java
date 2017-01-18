@@ -4,7 +4,7 @@ import GAME.Dot;
 
 public class Constans {
 
-	public final static int GRID = 3;			//	n*n board, (n+1)*(n+1) dots
+	public final static int GRID = 2;			//	n*n board, (n+1)*(n+1) dots
 	
 	public final static int BOARD_WIDTH_PIX = 1200;
 	public final static int BOARD_HEIGHT_PIX = 800;

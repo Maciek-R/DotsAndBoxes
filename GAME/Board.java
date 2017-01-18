@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.Timer;
 
+import Constans.Constans;
 import GAME.Controller.TURN;
 import GAME.Line.DIR;
 import GAME.Square.ID;
@@ -39,7 +40,9 @@ public class Board extends JPanel implements ActionListener{
 	Timer timer;	
 	//boolean cpM=false;
 	boolean plM = true;
-
+	
+	boolean isRunningGame = false;
+	int OptionMenu = 0;
 
 	public Board(MyFrame frejm) {
 		
@@ -47,7 +50,7 @@ public class Board extends JPanel implements ActionListener{
 		setFocusTraversalKeysEnabled(false);
 		setPreferredSize(new Dimension(BOARD_WIDTH_PIX, BOARD_HEIGHT_PIX));
 		
-		controller = new Controller();
+	//	controller = new Controller();
 		init();
 		
 	}
@@ -179,11 +182,37 @@ public class Board extends JPanel implements ActionListener{
 		g.drawString(points_1.toString(), 50, 70);
 		g.setColor(Color.RED);
 		g.drawString(points_2.toString(), 70, 70);
+		g.setColor(Color.BLACK);
+		g.drawString("Press Any Key", 90, 70);
+	}
+	
+	private void drawMenu(Graphics g){
+		g.setColor(Color.BLACK);
+		g.drawString("GRACZ - GRACZ", Constans.BOARD_WIDTH_PIX/2-50, Constans.BOARD_HEIGHT_PIX/2-75);
+		g.drawString("GRACZ - KOMPUTER", Constans.BOARD_WIDTH_PIX/2-60, Constans.BOARD_HEIGHT_PIX/2);
+		g.drawString("KOMPUTER - KOMPUTER", Constans.BOARD_WIDTH_PIX/2-70, Constans.BOARD_HEIGHT_PIX/2+75);
+		
+		g.setColor(Color.RED);
+		g.drawRect(Constans.BOARD_WIDTH_PIX/2-80, Constans.BOARD_HEIGHT_PIX/2-95, 150, 30);
+		g.drawRect(Constans.BOARD_WIDTH_PIX/2-80, Constans.BOARD_HEIGHT_PIX/2-20, 150, 30);
+		g.drawRect(Constans.BOARD_WIDTH_PIX/2-80, Constans.BOARD_HEIGHT_PIX/2+55, 160, 30);
+		
+		g.setColor(Color.GREEN);
+		if(OptionMenu == 1){
+			g.drawRect(Constans.BOARD_WIDTH_PIX/2-80, Constans.BOARD_HEIGHT_PIX/2-95, 150, 30);
+		}
+		else if(OptionMenu == 2){
+			g.drawRect(Constans.BOARD_WIDTH_PIX/2-80, Constans.BOARD_HEIGHT_PIX/2-20, 150, 30);
+		}else if(OptionMenu == 3){
+			g.drawRect(Constans.BOARD_WIDTH_PIX/2-80, Constans.BOARD_HEIGHT_PIX/2+55, 160, 30);
+		}
+		
 	}
 	
 	public void paint(Graphics g){
 		super.paint(g);
 		
+		if(isRunningGame){
 			drawTurn(g);
 			drawDots(g);
 			
@@ -197,7 +226,12 @@ public class Board extends JPanel implements ActionListener{
 			
 			if(controller.gameOver){
 				drawGameOver(g);
+				
 			}
+		}
+		else{
+			drawMenu(g);
+		}
 			
 }
 	
@@ -261,32 +295,50 @@ public class Board extends JPanel implements ActionListener{
 			int X = e.getX();
 			int Y = e.getY();
 			
-			line = null;
 			
-			Line[][] verLines = controller.getState().getVerLines();
-			Line[][] horLines = controller.getState().getHorLines();
-			
-			for(int i=0;i<horLines.length; ++i){
-				for(int j=0; j<horLines[i].length; ++j){
-					line = horLines[i][j].checkCollisionWith(X, Y);
-					
-					if(line!=null) {break;}
+			if(isRunningGame){
+				line = null;
+				
+				Line[][] verLines = controller.getState().getVerLines();
+				Line[][] horLines = controller.getState().getHorLines();
+				
+				for(int i=0;i<horLines.length; ++i){
+					for(int j=0; j<horLines[i].length; ++j){
+						line = horLines[i][j].checkCollisionWith(X, Y);
+						
+						if(line!=null) {break;}
+					}
+					if(line!=null) break;
 				}
-				if(line!=null) break;
+				
+				if(line==null)
+				for(int i=0;i<verLines.length; ++i){
+					for(int j=0; j<verLines[i].length; ++j){
+						line = verLines[i][j].checkCollisionWith(X, Y);
+						
+						if(line!=null) {break;}
+					}
+					if(line!=null) break;
+				}
+			}
+			else{
+				if(X > BOARD_WIDTH_PIX/2-80 && X < ((BOARD_WIDTH_PIX/2-80) + 150) 
+							&& Y > BOARD_HEIGHT_PIX/2-95 &&  Y < ((BOARD_HEIGHT_PIX/2-95) + 30))
+					OptionMenu = 1;
+				else if(X > BOARD_WIDTH_PIX/2-80 && X < ((BOARD_WIDTH_PIX/2-80) + 150) 
+						&& Y > BOARD_HEIGHT_PIX/2-20 &&  Y < ((BOARD_HEIGHT_PIX/2-20) + 30)){
+					OptionMenu = 2;
+				}
+				else if(X > BOARD_WIDTH_PIX/2-80 && X < ((BOARD_WIDTH_PIX/2-80) + 160) 
+						&& Y > BOARD_HEIGHT_PIX/2+55 &&  Y < ((BOARD_HEIGHT_PIX/2+55) + 30)){
+					OptionMenu = 3;
+				}
+				else{
+					OptionMenu = 0;
+				}
 			}
 			
-			if(line==null)
-			for(int i=0;i<verLines.length; ++i){
-				for(int j=0; j<verLines[i].length; ++j){
-					line = verLines[i][j].checkCollisionWith(X, Y);
-					
-					if(line!=null) {break;}
-				}
-				if(line!=null) break;
-			}
 			
-			
-			//System.out.println(e.getX() + " " +e.getY());
 			repaint();
 		}
 		
@@ -300,30 +352,55 @@ public class Board extends JPanel implements ActionListener{
 			int X = e.getX();
 			int Y = e.getY();
 		
-			
-			if(controller.tryb_gry == 0){
-				if(line!=null){
-					controller.playerMove(line);
-					line = null;
+			if(isRunningGame){
+				if(controller.gameOver){
+					isRunningGame = false;
 				}
-			}
-			else if(controller.tryb_gry == 1){
-						
-					
-					if(plM){
-						if(line!=null){	
-							plM = controller.playerMove(line);
-							line = null;
-						}
-					}	
-					else{
-						plM = !controller.compMove();
+				
+				if(controller.tryb_gry == 0){
+					if(line!=null){
+						controller.playerMove(line);
+						line = null;
 					}
+				}
+				else if(controller.tryb_gry == 1){
+							
+						
+						if(plM){
+							if(line!=null){	
+								plM = controller.playerMove(line);
+								line = null;
+							}
+						}	
+						else{
+							plM = !controller.compMove();
+						}
+					
+				}
+				else if(controller.tryb_gry == 2){
+						
+						controller.compMove();
+				}
+				
+				
 				
 			}
-			else if(controller.tryb_gry == 2){
+			else{
+				if(OptionMenu == 1){
+					controller = new Controller(0);
+				}
+				else if(OptionMenu == 2){
+					controller = new Controller(1);
+				}
+				else if(OptionMenu == 3){
+					controller = new Controller(2);
+				}
+				else{
 					
-					controller.compMove();
+				}
+				
+				if(OptionMenu >=1 && OptionMenu <=3)
+					isRunningGame = true;
 			}
 			
 			

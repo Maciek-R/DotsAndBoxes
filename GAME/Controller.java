@@ -23,11 +23,11 @@ public class Controller {
 	int movesToEnd = (GRID)*(GRID+1)*2;
 	boolean gameOver = false;
 	
-	public Controller(){
+	public Controller(int tryb){
 		Dots = new Dot[GRID+1][GRID+1];
 		setDots(Dots);
 		
-		
+		this.tryb_gry = tryb;
 		state = new State();
 	}
 	
@@ -41,10 +41,10 @@ public class Controller {
 	
 	public boolean playerMove(Line line){
 		
-		State s = new State(state);
+		/*State s = new State(state);
 		System.out.println();
 		state = new State(s);
-		
+		*/
 		if(tryb_gry == 0){
 			
 				boolean anotherMove;
